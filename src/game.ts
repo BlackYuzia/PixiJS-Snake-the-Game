@@ -124,19 +124,19 @@ export class Game {
                 return;
             }
 
-            // todo: prevent gameOver due break the neck / head via navigation
+            let newDirection = { ...this.state.direction };
             switch (e.code) {
                 case 'ArrowUp':
-                    this.state.direction = { x: 0, y: -1 }
+                    newDirection = { x: 0, y: -1 }
                     break;
                 case 'ArrowDown':
-                    this.state.direction = { x: 0, y: 1 }
+                    newDirection = { x: 0, y: 1 }
                     break;
                 case 'ArrowLeft':
-                    this.state.direction = { x: -1, y: 0 }
+                    newDirection = { x: -1, y: 0 }
                     break;
                 case 'ArrowRight':
-                    this.state.direction = { x: 1, y: 0 }
+                    newDirection = { x: 1, y: 0 }
                     break;
                 // Restart
                 case 'KeyR':
@@ -146,6 +146,10 @@ export class Game {
                 // Stop
                 case 'Escape':
                     break;
+            }
+            // Prevent break the neck, lol
+            if (newDirection.x !== -this.state.direction.x || newDirection.y !== -this.state.direction.y) {
+                this.state.direction = newDirection;
             }
         });
     }
