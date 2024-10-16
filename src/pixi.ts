@@ -8,13 +8,6 @@ export class Pixi {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    static randomIntCeilSize(min: number, max: number) {
-        const minMultiple = Math.ceil(min / CEIL_SIZE);
-        const maxMultiple = Math.floor(max / CEIL_SIZE);
-        const randomMultiple = this.randomInt(minMultiple, maxMultiple);
-        return randomMultiple * CEIL_SIZE;
-    }
-
     // Who we are? Lazy!
     // When we lazy? Always!
     static async createSidebar(app: Application) {
