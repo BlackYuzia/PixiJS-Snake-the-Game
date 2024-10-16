@@ -1,9 +1,9 @@
 # Snake the Game
 
-## Run
+## Production
 
 ```bash
-npm i && npm run preview
+npm i && && npm run build && npm run preview
 ```
 
 ## Development
