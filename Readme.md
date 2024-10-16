@@ -3,7 +3,7 @@
 ## Production
 
 ```bash
-npm i && && npm run build && npm run preview
+npm i && npm run build && npm run preview
 ```
 
 ## Development
