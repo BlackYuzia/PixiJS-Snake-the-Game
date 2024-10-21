@@ -4,13 +4,13 @@ import { CEIL_SIZE, FIELD_SIZE } from "./const";
 import { Game } from "./game";
 
 export class Food {
-    items: Sprite[]
+    items
 
     constructor() {
-        this.items = null as never;
+        this.items = null;
     }
 
-    async init(app: Application) {
+    async init(app) {
         this.items = [await Pixi.createFood({
             visible: false,
         })]
@@ -33,14 +33,14 @@ export class Food {
         }
     }
 
-    eat(game: Game) {
+    eat(game) {
         game.snake.growUp()
         this.create()
     }
 }
 
 export class FoodWall extends Food {
-    eat(game: Game) {
+    eat(game) {
         super.create()
         const wall = Pixi.createWall();
         game.app.stage.addChild(wall)
@@ -53,7 +53,7 @@ export class FoodTeleport extends Food {
         super()
     }
 
-    async init(app: Application) {
+    async init(app) {
         // todo: use Promise.All instead
         this.items = [
             await Pixi.createFood({
@@ -67,7 +67,7 @@ export class FoodTeleport extends Food {
         app.stage.addChild(...this.items)
     }
 
-    eat(game: Game) {
+    eat(game) {
         const teleportTo = Pixi.testForAABB(game.snake.state.segments[0], this.items[0]) ? this.items[1] : this.items[0];
         // Recalculate local (relative?) position and apply to head only
         const { x, y, } = game.snake.state.segments[0].toLocal(teleportTo);
@@ -79,7 +79,7 @@ export class FoodTeleport extends Food {
 }
 
 export class FoodSpeed extends Food {
-    eat(game: Game) {
+    eat(game) {
         super.create()
         // Speed up on 10%
         game.app.ticker.maxFPS += game.app.ticker.maxFPS * 0.1

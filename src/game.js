@@ -1,14 +1,14 @@
-import { Application, BitmapText, Graphics, Sprite } from "pixi.js";
+import { Application, BitmapText, Sprite } from "pixi.js";
 import { Pixi } from "./pixi";
 import { Snake } from "./snake";
 import { Food } from "./food";
 
 export class Game {
-    readonly app = new Application()
-    readonly snake = new Snake()
+    app = new Application()
+    snake = new Snake()
     food = new Food()
-    readonly walls: Graphics[] = [];
-    private readonly state = {
+    walls = [];
+    state = {
         modes: {
             classic: true,
             noDie: false,
@@ -24,26 +24,25 @@ export class Game {
         score: 0,
         best: 0,
     }
-    private readonly gui = {
-        modeSelect: {} as Sprite,
-        playBtn: {} as Sprite,
-        exitBtn: {} as Sprite,
-        menuBtn: {} as Sprite,
-        best: {} as BitmapText,
-        score: {} as BitmapText,
+    gui = {
+        modeSelect: {},
+        playBtn: {},
+        exitBtn: {},
+        menuBtn: {},
+        best: {},
+        score: {},
     }
     // We change only icons, so instead of store groups we store icons only. We could change it in future if we want
-    private readonly gameModesIcons: Sprite[] = []
+    gameModesIcons = []
 
-    public async init() {
+    async init() {
         await this.app.init({
             width: 1000 + 32 * 2,
             height: 700 + 32 * 2,
             eventMode: "auto",
             background: 0x077482
         });
-        document.querySelector("#app")!.appendChild(this.app.canvas);
-        // @ts-expect-error
+        document.querySelector("#app").appendChild(this.app.canvas);
         globalThis.__PIXI_APP__ = this.app;
 
         // Init others
@@ -53,7 +52,7 @@ export class Game {
         this.initWalls()
     }
 
-    private async initGUI() {
+    async initGUI() {
         // Wait background first
         const sidebar = await Pixi.createSidebar(this.app);
         Pixi.createField(this.app);
@@ -118,7 +117,7 @@ export class Game {
         this.gui.score = score;
     }
 
-    private initKeys() {
+    initKeys() {
         window.addEventListener('keydown', (e) => {
             if (!this.state.playing) {
                 return;
@@ -154,13 +153,13 @@ export class Game {
         });
     }
 
-    private initWalls() {
+    initWalls() {
         const walls = Pixi.createWalls();
         this.walls.push(...walls);
         this.app.stage.addChild(...walls)
     }
 
-    private async togglePlay() {
+    async togglePlay() {
         this.state.playing = !this.state.playing;
         // Show / hide buttons
         this.gui.playBtn.visible = !this.state.playing
@@ -190,7 +189,7 @@ export class Game {
         this.food.destroy()
     }
 
-    public updateScore(score: number) {
+    updateScore(score) {
         this.state.score = score;
         this.gui.score.text = this.state.score.toString()
         // Update best score
@@ -200,7 +199,7 @@ export class Game {
         }
     }
 
-    private foodAABB() {
+    foodAABB() {
         // ~~head & foot compare~~ Compare each segment instead, to prevent stuck food in body
         for (const segment of this.snake.state.segments) {
             const eat = this.food.items.some(food => Pixi.testForAABB(segment, food));
@@ -212,7 +211,7 @@ export class Game {
         }
     }
 
-    private bodyAABB() {
+    bodyAABB() {
         // Compare head and each segment
         const gameOver = this.snake.state.segments.slice(1).some(segment => Pixi.testForAABB(this.snake.state.segments[0], segment))
         if (gameOver) {
@@ -220,7 +219,7 @@ export class Game {
         }
     }
 
-    private wallsAABB() {
+    wallsAABB() {
         // Compare head and each wall
         const gameOver = this.walls.some(wall => Pixi.testForAABB(this.snake.state.segments[0], wall))
         if (gameOver) {
@@ -228,7 +227,7 @@ export class Game {
         }
     }
 
-    private readonly runners = [
+    runners = [
         // Default
         () => {
             this.foodAABB()
@@ -252,7 +251,7 @@ export class Game {
             this.app.ticker.remove(this.runners[0])
         },
     ]
-    private getRunner() {
+    getRunner() {
         if (this.state.modes.noDie) {
             return this.runners[1]
         }

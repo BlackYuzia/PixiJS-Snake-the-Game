@@ -4,15 +4,18 @@ import { Game } from "./game";
 import { CEIL_SIZE } from "./const";
 
 export class Snake {
-    state: {
-        segments: Sprite[],
-        snake: null | Container,
-    } = {
-            segments: [] as Sprite[],
-            snake: null,
-        }
+    /**
+    * @type {{segments: Sprite[],        snake: null | Container}}
+    */
+    state = {
+        segments: [],
+        snake: null,
+    }
 
-    move(state: Game["state"]) {
+    /**
+     * @argument {Game["state"]} state
+     */
+    move(state) {
         const head = this.state.segments[0];
         const prev = this.state.segments.map(({ x, y }) => ({ x, y }))
         head.x += state.direction.x * CEIL_SIZE
@@ -25,7 +28,10 @@ export class Snake {
             segment.y = coord.y;
         }
     }
-    async create(app: Application) {
+    /**
+     * @argument {Application} app
+     */
+    async create(app) {
         const state = await Pixi.createSnake(app)
         this.state.segments = state.segments;
         this.state.snake = state.snake;
@@ -36,6 +42,6 @@ export class Snake {
         this.state.segments.length = 0;
     }
     async growUp() {
-        await Pixi.growSnake(this.state.snake!, this.state.segments);
+        await Pixi.growSnake(this.state.snake, this.state.segments);
     }
 }

@@ -4,13 +4,13 @@ import { BORDERS_SIZE, CEIL_SIZE, FIELD_PX, FIELD_SIZE } from "./const";
 import { Food, FoodSpeed, FoodTeleport, FoodWall } from "./food";
 
 export class Pixi {
-    static randomInt(min: number, max: number) {
+    static randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     // Who we are? Lazy!
     // When we lazy? Always!
-    static async createSidebar(app: Application) {
+    static async createSidebar(app) {
         const texture = await Assets.load('sidebar.png');
         const sidebar = new Sprite(texture);
         sidebar.x = app.renderer.width - sidebar.width; // right
@@ -18,7 +18,7 @@ export class Pixi {
         return sidebar;
     }
 
-    static createField(app: Application) {
+    static createField(app) {
         // +1 px (w & h) to fix display
         const field = new Graphics()
             .fill(0x575757)
@@ -31,11 +31,7 @@ export class Pixi {
     }
 
     // There we should also make background, but we already has it on background so...
-    static async createBitmapText(app: Application, options: {
-        text: string;
-        x: number;
-        y: number;
-    }) {
+    static async createBitmapText(app, options) {
         const text = new BitmapText({
             text: options.text,
             x: options.x,
@@ -45,12 +41,7 @@ export class Pixi {
         return text;
     }
 
-    static async createButton(app: Application, options: {
-        x: number, y: number,
-        onClick: () => void,
-        path: string,
-        hidden?: boolean,
-    }) {
+    static async createButton(app, options) {
         // Who we are? 
         const button = new Sprite(await Assets.load(options.path))
 
@@ -69,7 +60,14 @@ export class Pixi {
     }
 
     // We should provide whole game to allow change food class (type)
-    static async createGameModsGUI(app: Application, state: Game["state"], gameModesIcons: Sprite[], sidebar: Sprite, game: Game) {
+    /**
+     * @argument {Application} app
+     * @argument {Game["state"]} state
+     * @argument {Sprite[]} gameModesIcons
+     * @argument {Sprite} sidebar
+     * @argument {Game} game
+    */
+    static async createGameModsGUI(app, state, gameModesIcons, sidebar, game) {
         const bg = new Sprite(await Assets.load('gamemodes_bg.png'));
         bg.x = sidebar.x;
         bg.y = 272;
@@ -77,7 +75,8 @@ export class Pixi {
         const gameModesNames = ["Classic", "No Die", "Walls", "Portal", "Speed"];
         const gameModesFood = [Food, Food, FoodWall, FoodTeleport, FoodSpeed];
         const gameModesValues = Object.values(state.modes);
-        const gameModesKeys = Object.keys(state.modes) as (keyof typeof state.modes)[];
+        /** @type {(keyof typeof state.modes)[]} */
+        const gameModesKeys = Object.keys(state.modes);
         // create checkboxes
         for (let i = 0; i < gameModesValues.length; i++) {
             const group = new Container({})
@@ -117,8 +116,8 @@ export class Pixi {
         return bg
     }
 
-    static async createSnake(app: Application) {
-        const segments: Sprite[] = [];
+    static async createSnake(app) {
+        const segments = [];
         const snake = new Container();
         const textureHead = await Assets.load("snake_head.png")
         const textureBody = await Assets.load("snake_body.png")
@@ -138,7 +137,7 @@ export class Pixi {
         return { snake, segments }
     }
 
-    static async growSnake(snake: Container, segments: Sprite[]) {
+    static async growSnake(snake, segments) {
         const textureBody = await Assets.load("snake_body.png");
         const segment = new Sprite(textureBody);
         const lastSegment = segments[segments.length - 1];
@@ -150,11 +149,7 @@ export class Pixi {
         segment.y = lastSegment.y;
     }
 
-    static async createFood(options: {
-        x?: number;
-        y?: number;
-        visible: boolean,
-    }) {
+    static async createFood(options) {
         const food = new Sprite(await Assets.load("food.png"));
         food.x = options.x || this.randomInt(1, FIELD_SIZE) * CEIL_SIZE
         food.y = options.y || this.randomInt(1, FIELD_SIZE) * CEIL_SIZE
@@ -196,7 +191,7 @@ export class Pixi {
         return wall;
     }
 
-    static testForAABB(object1: Sprite | Graphics, object2: Sprite | Graphics) {
+    static testForAABB(object1, object2) {
         const bounds1 = object1.getBounds();
         const bounds2 = object2.getBounds();
 
