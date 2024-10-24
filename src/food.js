@@ -41,6 +41,7 @@ export class Food {
 
 export class FoodWall extends Food {
     eat(game) {
+        super.eat()
         super.create()
         const wall = Pixi.createWall();
         game.app.stage.addChild(wall)
@@ -73,13 +74,14 @@ export class FoodTeleport extends Food {
         const { x, y, } = game.snake.state.segments[0].toLocal(teleportTo);
         game.snake.state.segments[0].x += x
         game.snake.state.segments[0].y += y
-
+        super.eat()
         super.create()
     }
 }
 
 export class FoodSpeed extends Food {
     eat(game) {
+        super.eat()
         super.create()
         // Speed up on 10%
         game.app.ticker.maxFPS += game.app.ticker.maxFPS * 0.1
