@@ -1,4 +1,4 @@
-import { Application, BitmapText, Graphics, Sprite } from "pixi.js";
+import { Application, BitmapText, Graphics, Point, Sprite } from "pixi.js";
 import { Pixi } from "./pixi";
 import { Snake } from "./snake";
 import { Food } from "./food";
@@ -228,6 +228,60 @@ export class Game {
         }
     }
 
+    // Store to prevent offsets for No Die gamemode only
+    private readonly boundses: number[] = []
+    // Teleport head to opposite wall
+    private outOfBoundsAABB() {
+        // Compare head and each segment
+        const head = this.snake.state.segments[0]
+        const wall = this.walls.find(wall => Pixi.testForAABB(head, wall))
+        if (wall) {
+            const bounds2 = wall.getBounds()
+            /* 
+                side x y width height
+                left 0 0 32 764 
+                 top 0 0 764 32  
+               right 733 0 32 764 
+              bottom 0 733 764 32
+             */
+            // Left 0 0 + +
+            if (bounds2.x < 1 && bounds2.y < 1 && bounds2.height > bounds2.width) {
+                // console.log("left:before", head.x, head.y)
+                const rightWall = this.walls[2].getBounds();
+                // Don't forget about offset from bottom and right walls to prevent AABB trigger
+                head.x += head.toGlobal(new Point(rightWall.x - rightWall.width - 1, 0)).x
+                // console.log("left:after", head.x, head.y)
+                return;
+            }
+            // Top 0 0 + +
+            if (bounds2.x < 1 && bounds2.y < 1 && bounds2.width > bounds2.height) {
+                // console.log("top:before", head.x, head.y)
+                const bottomWall = this.walls[3].getBounds();
+                head.y += head.toGlobal(new Point(0, bottomWall.y - bottomWall.height - 1)).y
+                // console.log("top:after", head.x, head.y)
+                return;
+            }
+            // Right max 0 - +
+            if (bounds2.x > 0 && bounds2.height > bounds2.width) {
+                // console.log("right:before", head.x, head.y)
+                const leftWall = this.walls[1].getBounds();
+                // I'm really no clue why there is 3 px offset
+                head.x -= this.boundses[1] ? this.boundses[1] : this.boundses[1] = head.toGlobal(new Point(leftWall.x - leftWall.width - 3, 0)).x
+                // console.log("right:after", head.x, head.y)
+                return;
+            }
+            // Bottom 0 max + -
+            if (bounds2.y > 0 && bounds2.width > bounds2.height) {
+                // console.log("bottom:before", head.x, head.y)
+                const topWall = this.walls[0].getBounds();
+                // I'm really no clue why there is 3 px offset
+                head.y -= this.boundses[0] ? this.boundses[0] : this.boundses[0] = head.toGlobal(new Point(0, topWall.y - topWall.height - 3)).y
+                // console.log("bottom:after", head.x, head.y)
+                return;
+            }
+        }
+    }
+
     private readonly runners = [
         // Default
         () => {
@@ -244,12 +298,13 @@ export class Game {
         // No Die
         () => {
             this.foodAABB()
+            this.outOfBoundsAABB()
             if (this.state.playing) {
                 this.snake.move(this.state)
                 return;
             }
             // Remove handler to prevent memory leak
-            this.app.ticker.remove(this.runners[0])
+            this.app.ticker.remove(this.runners[1])
         },
     ]
     private getRunner() {
