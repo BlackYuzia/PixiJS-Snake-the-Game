@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base='/PixiJS-Snake-the-Game/'",
+    "build": "tsc && vite build --base=PixiJS-Snake-the-Game",
     "preview": "vite preview"
   },
   "devDependencies": {
