@@ -20,7 +20,7 @@ Conditions:
 Game Modes:
 
 - Classic( Classic snake game: The game ends if the snake hits the edge of the game field or its own body )
-- God mode( The snake can't die. It passes through its own body and goes through the wall )
+- God mode( The snake can't die. It passes through its own body and goes through the wall ). Snake should teleport from left side (out of bounds) to right side (and vice versa). Same for top & bottom
 - Walls( When the snake eats food, new food spawns, and one wall cell also spawns in a random place on the field. );
 - Portal( At the same time on field have two cell of food. When snake eat one of them, she spawn in second food cell and save direction. The body movement is gradual, not all at once, one step, one cell of the body );
 - Speed( When the snake eats food, it speeds up by 10% );
